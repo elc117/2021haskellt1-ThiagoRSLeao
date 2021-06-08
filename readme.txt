@@ -1,3 +1,53 @@
+!-------------------!               Descrição do Programa             !-------------------!
+
+Basicamente, o usuário chama pela função main, e ela solicita a inserção de algumas informações:
+- a largura e altura da imagem gerada. respectivos 'w' e 'h'.
+- número de formas geradas, o 'n'.
+- o tipo de formas geradas, o 't';
+- 'c' que é cor das formas geradas, onde pode se escolher uma cor fixa rgb ou cores aleatórios, ou ainda uma paleta de cinzas aleatórios.
+- 'f' se deseja ou não que as formas sejam preenchidas.
+
+Define-se fill como True se f for "y" ou False se não.
+
+Então declara o valor da 'points' referente a forma escolhida, isto é, o número de casas utilizadas do vetor de pontos (x,y) por forma.
+
+E atribui os vetores de inteiros gerados de maneira radômica os purificando para as seguintes variáveis
+
+rxList ---> lista responsável por conter os valores do eixo x dos pontos, é gerado um valor aleatório entre 1 e w (a largura da imagem) para cada n vezes points
+ryList ---> a mesma coisa que a anterior, mas para o eixo y.
+
+reds, greens, blues ---> cada um sendo o vetor que será utilizado em conjunto com os outros para definir o rgb das formas.
+
+grays ---> se o usuário escolher a paleta de cores cinza para as formas, atribui o mesmo valor do indice x para ambas as três própriedades do rgb, poderia ter sido feito reaproveitado ou o reds ou o blues ou o grens, já que nesse cenário eles não são utilizados, mas quis separar tudo certinho.
+
+sizes ---> define um vetor de tamanhos de raios aleatorios entre 1 e 100 para caso o usuário deseje circulos.
+
+Define o colors de acordo com o valor inserido pelo usuário em c.
+
+Define svgBody de acordo com o tipo de forma que foi escolhida (Linhas quebradas, Linhas Curvadas ou Circulos), chamando a função correspondente gen 
+que gera uma lista de strings, cada uma sendo uma tag svg com suas determinadas caracteristicas, depois utiliza a função intercalate que basicamente pega todas as strings da lista e concatena
+podendo imprimir as svg na forma de svgBody, entre o  svgBegin e svgEnd, gerando nossa linda arte!
+
+Dica: a paleta de cores cinza fica incrível junto com a linhas curvadas preenchidas!
+
+o svg anexado como exemplo foi confeccionado com os seguintes parametros:
+w: 1300
+h: 700
+n: 200
+t: s
+c: g
+f: y
+
+
+
+
+
+
+
+
+!-------------------!       Adversidades enfrentadas durante o Desenvolvimento       !-------------------!
+
+
 Inicialmente eu utilizei as funções anteriormente utilizadas svgBegin, svgEnd e svgPath.
 posteriormente eu fiquei estudando por horas como implementar o randomIO, finailmente consigo faze-lo criando um project
 com o cabal e declarando o pacote random como dependencia.
@@ -41,3 +91,5 @@ PERGUNTA
 essa receita de como conseguir um dado, o que ela seria exatamente?
 
 Eu estava pensando que seria um número especifico que quando processado retornasse um determinado dado, por isso ele é "purificado".
+
+
