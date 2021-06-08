@@ -23,10 +23,57 @@ svgPath :: String -> String -> String
 svgPath d style = 
   printf "<path d='%s' style='%s' />\n" d style
 
---randomCircle
+genCurves :: [(Int, Int)] -> Int -> [String]
+genCurves pointList n = [svgCurvedPath (fst (p !! (a*4))) (snd (p !! (a*4))) (fst (p !! ((a*4)+1))) (snd (p !! ((a*4)+1))) (fst (p !! ((a*4)+2))) (snd (p !! ((a*4)+2))) (fst (p !! ((a*4)+3))) (snd (p !! ((a*4)+3))) "122,222,100"| a <- [0..n-1]] where p = pointList
+
+genPointList :: [Int] -> [Int] -> [(Int, Int)]
+genPointList listX listY = zip listX listY
 
 rndBet :: (Int,Int) -> IO Int
 rndBet (x,y) = randomRIO(x,y)
+
+svgCurvedPath :: Int -> Int -> Int -> Int -> Int -> Int -> Int -> Int -> String -> String
+svgCurvedPath x y cx cy cx2 cy2 x2 y2 color = svgPath ("M "++ show x ++ " " ++ show y ++ " " ++ show cx ++ " " ++ show cy ++ " " ++ show cx2 ++ " " ++ show cy2 ++ " L "++ show x2 ++ " " ++ show y2) ("stroke-width: 3;stroke: rgb("++ color ++");fill: none;")
+
+main :: IO ()
+main = do
+    putStrLn "What should be the Width?"  
+    w <- getLine
+    putStrLn "What should be the Height?"  
+    h <- getLine
+    --putStrLn "Input the RGB as xxx,xxx,xxx, or... " 
+    -- \n'red','blue' or 'green' if you want only randoms types of that color."  
+    --colors <- getLine    
+    x <- rndBet(1, read w :: Int)
+    y <- rndBet(1, read h :: Int)  
+    x2 <- rndBet(1, read w :: Int)
+    y2 <- rndBet(1, read h :: Int)  
+    cx <- rndBet(1, read w :: Int)
+    cy <- rndBet(1, read h :: Int) 
+    cx2 <- rndBet(1, read w :: Int)
+    cy2 <- rndBet(1, read h :: Int)  
+    n <- rndBet(100, 150);
+
+    rxList <- sequence [rndBet(1, read w :: Int) | x <- [0..(n*4)]] 
+    ryList <- sequence [rndBet(1, read h :: Int) | x <- [0..(n*4)]]
+
+    writeFile "./Abstrart.svg" (svgBegin (read w :: Int) (read h :: Int) ++ (intercalate " " (genCurves (genPointList rxList ryList) 30)) ++ svgEnd)
+    --writeFile "./Abstrart.svg" (svgBegin (read w :: Int) (read h :: Int) ++ (svgPath ("M "++ show (getrnd (read w :: Int)) ++ " 100 L 150 200") "stroke-width: 3;stroke:red;fill: none;") ++ svgEnd)
+--getrnd x = do
+    --r <- randomRIO(1, x)
+    --return r
+    --writeFile "./Abstrart.txt" show (listRndBet (1, read w :: Int ) (read n :: Int))
+    --writeFile "./Abstrart.svg" (svgBegin (read w :: Int) (read h :: Int) ++ (randomSvgs rx) ++ svgEnd)
+--svgMount :: Int -> Int -> String
+--svgMount x y = do
+--    rx <- rndBet(1, x)
+--    ry <- rndBet(1, y)    
+--    rx2 <- rndBet(1, x)
+--    ry2 <- rndBet(1, y)
+--    return svgPath ("M "++ show rx ++ " " ++ show ry ++ " L "++ show rx2 ++ " " ++ show ry2) "stroke-width: 3;stroke:red;fill: none;"
+
+-- Funções Mortas, Pobres funções que não funcionaram ou não foram implementadas T-T --
+
 
 --defineColor :: String -> String
 --defineColor color
@@ -53,36 +100,9 @@ rndBet (x,y) = randomRIO(x,y)
 --[ ((randomRIO(1,(read w :: Int)), randomRIO(1,(read h :: Int))), (randomRIO(1,(read w :: Int)), randomRIO(1,(read h :: Int)))) | a <- [1..(read n :: Int)]]
  --listRndBet :: (Int,Int) -> Int -> [IO Int]
 --listRndBet (x,y) n = [randomRIO(x,y) | a <- [1..n]]
+ --garante que sejam pegados 4 elementos do vetor de números aleatórios sem repetir elementos, ou se 
 
-main :: IO ()
-main = do
-    putStrLn "What should be the Width?"  
-    w <- getLine
-    putStrLn "What should be the Height?"  
-    h <- getLine
-    putStrLn "Input the RGB as xxx,xxx,xxx, or... " 
-    -- \n'red','blue' or 'green' if you want only randoms types of that color."  
-    colors <- getLine    
-    x <- rndBet(1, read w :: Int)
-    y <- rndBet(1, read h :: Int)  
-    x2 <- rndBet(1, read w :: Int)
-    y2 <- rndBet(1, read h :: Int)  
-    cx <- rndBet(1, read w :: Int)
-    cy <- rndBet(1, read h :: Int) 
-    cx2 <- rndBet(1, read w :: Int)
-    cy2 <- rndBet(1, read h :: Int)    
-    
-    writeFile "./Abstrart.svg" (svgBegin (read w :: Int) (read h :: Int) ++ svgPath ("M "++ show x ++ " " ++ show y ++ " " ++ show cx ++ " " ++ show cx2 ++ " " ++ show cy ++ " " ++ show cy2 ++ " L "++ show x2 ++ " " ++ show y2) ("stroke-width: 3;stroke: rgb(" ++ colors ++ ");fill: none;") ++ svgEnd)
-    --writeFile "./Abstrart.svg" (svgBegin (read w :: Int) (read h :: Int) ++ (svgPath ("M "++ show (getrnd (read w :: Int)) ++ " 100 L 150 200") "stroke-width: 3;stroke:red;fill: none;") ++ svgEnd)
---getrnd x = do
-    --r <- randomRIO(1, x)
-    --return r
-    --writeFile "./Abstrart.txt" show (listRndBet (1, read w :: Int ) (read n :: Int))
-    --writeFile "./Abstrart.svg" (svgBegin (read w :: Int) (read h :: Int) ++ (randomSvgs rx) ++ svgEnd)
---svgMount :: Int -> Int -> String
---svgMount x y = do
---    rx <- rndBet(1, x)
---    ry <- rndBet(1, y)    
---    rx2 <- rndBet(1, x)
---    ry2 <- rndBet(1, y)
---    return svgPath ("M "++ show rx ++ " " ++ show ry ++ " L "++ show rx2 ++ " " ++ show ry2) "stroke-width: 3;stroke:red;fill: none;"
+--getRandomPathValues :: Int -> [(Int, Int, Int, Int)]
+--getRandomPathValues n = [(listRand !! x*4, listRand!!( x*4+1), listRand!!( x*4+2), listRand!!( x*4+3)) | x <- [0..n]] 
+--                        where listRand = [1..100]
+
