@@ -23,8 +23,8 @@ svgPath :: String -> String -> String
 svgPath d style = 
   printf "<path d='%s' style='%s' />\n" d style
 
-genCurves :: [(Int, Int)] -> Int -> [String]
-genCurves pointList n = [svgCurvedPath (p !! (a*4)) (p !! ((a*4)+1)) (p !! ((a*4)+2)) (p !! ((a*4)+3)) "122,222,100"| a <- [0..n-1]] where p = pointList
+genCurves :: [(Int, Int)] -> [String] -> Int -> [String]
+genCurves pointList colors n = [svgCurvedPath (p !! (a*4)) (p !! ((a*4)+1)) (p !! ((a*4)+2)) (p !! ((a*4)+3)) (colors !! a)| a <- [0..n-1]] where p = pointList
 
 genPointList :: [Int] -> [Int] -> [(Int, Int)]
 genPointList listX listY = zip listX listY
@@ -33,9 +33,12 @@ rndBet :: (Int,Int) -> IO Int
 rndBet (x,y) = randomRIO(x,y)
 
 svgCurvedPath :: (Int, Int) -> (Int, Int) -> (Int, Int) -> (Int, Int) -> String -> String
-svgCurvedPath (x, y) (cx, cy) (cx2, cy2) (x2, y2) color = svgPath ("M "++ show x ++ " " ++ show y ++ " " ++ show cx ++ " " ++ show cy ++ " " ++ show cx2 ++ " " ++ show cy2 ++ " L "++ show x2 ++ " " ++ show y2) ("stroke-width: 3;stroke: rgb("++ color ++");fill: none;")
+svgCurvedPath (x, y) (cx, cy) (cx2, cy2) (x2, y2) color = svgPath ("M "++ show x ++ " " ++ show y ++ " " ++ show cx ++ " " ++ show cy ++ " " ++ show cx2 ++ " " ++ show cy2 ++ " L "++ show x2 ++ " " ++ show y2) ("stroke-width: 3;stroke: rgb"++ color ++";fill: none;")
 
-main :: IO ()
+mergeColors :: [Int] -> [Int] -> [Int] -> Int -> [String]
+mergeColors reds blues greens n = ["("++ show (reds !! x) ++ ", " ++ show (greens !! x) ++ ", " ++ show (blues !! x) ++ ")" | x <- [0..n]]
+
+main ::  IO ()
 main = do
     putStrLn "What should be the Width?"  
     w <- getLine
@@ -52,11 +55,12 @@ main = do
 
     rxList <- sequence [rndBet(1, read w :: Int) | x <- [0..((read n :: Int)*4)]] 
     ryList <- sequence [rndBet(1, read h :: Int) | x <- [0..((read n :: Int)*4)]]
-    red <- sequence [rndBet(1, read h :: Int) | x <- [0..((read n :: Int)-1)]]
-    green <- sequence [rndBet(1, read h :: Int) | x <- [0..((read n :: Int)-1)]]
-    blue <- sequence [rndBet(1, read h :: Int) | x <- [0..((read n :: Int)-1)]]
+    reds <- sequence [rndBet(1, read h :: Int) | x <- [0..(read n :: Int)]]
+    greens <- sequence [rndBet(1, read h :: Int) | x <- [0..(read n :: Int)]]
+    blues <- sequence [rndBet(1, read h :: Int) | x <- [0..(read n :: Int)]]    
+    
 
-    writeFile "./Abstrart.svg" (svgBegin (read w :: Int) (read h :: Int) ++ (intercalate " " (genCurves (genPointList rxList ryList) (read n :: Int))) ++ svgEnd)
+    writeFile "./Abstrart.svg" (svgBegin (read w :: Int) (read h :: Int) ++ (intercalate " " (genCurves (genPointList rxList ryList) (mergeColors reds blues greens (read n :: Int)) (read n :: Int))) ++ svgEnd)
     --writeFile "./Abstrart.svg" (svgBegin (read w :: Int) (read h :: Int) ++ (svgPath ("M "++ show (getrnd (read w :: Int)) ++ " 100 L 150 200") "stroke-width: 3;stroke:red;fill: none;") ++ svgEnd)
 --getrnd x = do
     --r <- randomRIO(1, x)
