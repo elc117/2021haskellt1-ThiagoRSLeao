@@ -66,7 +66,7 @@ mergeColors reds blues greens n = ["("++ show (reds !! x) ++ ", " ++ show (green
 
 
 
-main ::  IO ()
+main :: IO ()
 main = do
     putStrLn "What should be the Width?"  
     w <- getLine
@@ -85,24 +85,28 @@ main = do
 
     let points = case () of _  |t == "b" || t == "s" -> 4
                                |t == "c" -> 1
-
-    rxList <- sequence [rndBet(1, read w :: Int) | x <- [0..((read n :: Int)*points)]] 
-    ryList <- sequence [rndBet(1, read h :: Int) | x <- [0..((read n :: Int)*points)]]
-    reds <- sequence [rndBet(0, 255) | x <- [0..(read n :: Int)]]
-    greens <- sequence [rndBet(0, 255) | x <- [0..(read n :: Int)]]
-    blues <- sequence [rndBet(0, 255) | x <- [0..(read n :: Int)]]    
-    grays <- sequence [rndBet(0, 255) | x <- [0..(read n :: Int)]]   
-    sizes <- sequence [rndBet(0, 100) | x <- [0..(read n :: Int)]]   
     
-    let colors = case () of _   |c == "r" -> (mergeColors reds blues greens (read n :: Int))
-                                |c == "g" -> (mergeColors grays grays grays (read n :: Int))
-                                |otherwise -> ["(" ++ c ++ ")" | a <- [0..(read n :: Int)]]
+    let nInt = read n :: Int;
+        wInt = read w :: Int;
+        hInt = read h :: Int;
 
-    let svgBody = case () of _  |t == "b" -> intercalate " " (genBrokens (genPointList rxList ryList) (colors) (read n :: Int) fill)
-                                |t == "s" -> intercalate " " (genCurves (genPointList rxList ryList) (colors) (read n :: Int) fill) 
-                                |t == "c" -> intercalate " " (genCircles (genPointList rxList ryList) (colors) sizes (read n :: Int) fill) 
+    rxList <- sequence [rndBet(1, wInt) | x <- [0..(nInt*points)]] 
+    ryList <- sequence [rndBet(1, hInt) | x <- [0..(nInt*points)]]
+    reds <- sequence [rndBet(0, 255) | x <- [0..nInt]]
+    greens <- sequence [rndBet(0, 255) | x <- [0..nInt]]
+    blues <- sequence [rndBet(0, 255) | x <- [0..nInt]]    
+    grays <- sequence [rndBet(0, 255) | x <- [0..nInt]]   
+    sizes <- sequence [rndBet(0, 100) | x <- [0..nInt]]   
     
-    writeFile "./Abstrart.svg" (svgBegin (read w :: Int) (read h :: Int) ++ svgBody ++ svgEnd) 
+    let colors = case () of _ |c == "r" -> (mergeColors reds blues greens nInt)        
+                              |c == "g" -> (mergeColors grays grays grays nInt)
+                              |otherwise -> ["(" ++ c ++ ")" | a <- [0..nInt]]
+
+    let svgBody = case () of _ |t == "b" -> intercalate " " (genBrokens (genPointList rxList ryList) (colors) nInt fill)
+                               |t == "s" -> intercalate " " (genCurves (genPointList rxList ryList) (colors) nInt fill) 
+                               |t == "c" -> intercalate " " (genCircles (genPointList rxList ryList) (colors) sizes nInt fill) 
+    
+    writeFile "./Abstrart.svg" (svgBegin wInt hInt ++ svgBody ++ svgEnd) 
     
     
     --Implementar formas geométricas, case of e where.
