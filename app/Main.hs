@@ -43,16 +43,18 @@ genCurves pointList colors n fill = [svgCurvedPath (p !! (a*4)) (p !! ((a*4)+1))
 
 --Gera um svgPath curvado
 svgCurvedPath :: (Int, Int) -> (Int, Int) -> (Int, Int) -> (Int, Int) -> String -> Bool -> String
-svgCurvedPath (x, y) (cx, cy) (cx2, cy2) (x2, y2) color fill = svgPath ("M "++ show x ++ " " ++ show y ++ " C " ++ show cx ++ " " ++ show cy ++ " " ++ show cx2 ++ " " ++ show cy2 ++ " " ++ show x2 ++ " " ++ show y2) ("stroke-width: 3;stroke: rgb"++ color ++";fill: " ++ if(fill) then "rgb" ++ color else "none" ++ ";")
-
+svgCurvedPath (x, y) (cx, cy) (cx2, cy2) (x2, y2) color fill = svgPath ("M "++ s x ++ " " ++ s y ++ " C " ++ s cx ++ " " ++ s cy ++ " " ++ s cx2 ++ " " ++ s cy2 ++ " " ++ s x2 ++ " " ++ s y2) ("stroke-width: 3;stroke: rgb"++ color ++";fill: " ++ if(fill) then "rgb" ++ color else "none" ++ ";")
+  where s = show
 --Gera uma lista de Strings de tag svgPatch com quebras;
 genBrokens :: [(Int, Int)] -> [String] -> Int -> Bool -> [String]
-genBrokens pointList colors n fill = [svgBrokenPath (p !! (a*4)) (p !! ((a*4)+1)) (p !! ((a*4)+2)) (p !! ((a*4)+3)) (colors !! a) fill| a <- [0..n-1]] where p = pointList
+genBrokens pointList colors n fill = [svgBrokenPath (p !! (a*4)) (p !! ((a*4)+1)) (p !! ((a*4)+2)) (p !! ((a*4)+3)) (colors !! a) fill| a <- [0..n-1]] 
+  where p = pointList
+
 
 --Gera um path com quebras
 svgBrokenPath :: (Int, Int) -> (Int, Int) -> (Int, Int) -> (Int, Int) -> String -> Bool -> String
-svgBrokenPath (x, y) (cx, cy) (cx2, cy2) (x2, y2) color fill = svgPath ("M "++ show x ++ " " ++ show y ++ " " ++ show cx ++ " " ++ show cy ++ " " ++ show cx2 ++ " " ++ show cy2 ++ " L " ++ show x2 ++ " " ++ show y2) ("stroke-width: 3;stroke: rgb"++ color ++";fill: " ++ if(fill) then "rgb" ++ color else "none" ++ ";")
-
+svgBrokenPath (x, y) (cx, cy) (cx2, cy2) (x2, y2) color fill = svgPath ("M "++ s x ++ " " ++ s y ++ " " ++ s cx ++ " " ++ s cy ++ " " ++ s cx2 ++ " " ++ s cy2 ++ " L " ++ s x2 ++ " " ++ s y2) ("stroke-width: 3;stroke: rgb"++ color ++";fill: " ++ if(fill) then "rgb" ++ color else "none" ++ ";")
+  where s = show
 --Gera uma lista de Strings de tag svgPatch com quebras;
 genCircles :: [(Int, Int)] -> [String] -> [Int] -> Int -> Bool -> [String]
 genCircles pointList colors rays n fill = [svgCircle (p !! a) (rays !! a) ("stroke-width: 3;stroke: rgb"++ (colors !! a) ++";fill: " ++ if(fill) then ("rgb" ++ (colors !! a)) else "none" ++ ";")| a <- [0..n-1]] where p = pointList
